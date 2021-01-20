@@ -15,11 +15,10 @@ router.post('/staff/signin', (req, res, next) => {
     const loginUsername = ReqData.username;    const loginPassword = ReqData.password;
     
     const LoginCheck = database.query('SELECT user_stafflogin.* FROM `user_stafflogin` WHERE user_stafflogin.login_Id = ? limit 1', [loginUsername], (err, rows, fields) => {
-  
-
+      
       if(err) {
         res.status(200)
-           .json({message: 'Failed to Login', flag: 'false'});
+           .json({message: err});
       }else{
         const match_row = rows.length;
         if(match_row > 0){
@@ -31,17 +30,18 @@ router.post('/staff/signin', (req, res, next) => {
           const token = jwt.sign({Username: loginUsername, userId: rows[0].Id},'appwarehouse-app-super-shared-secret',{expiresIn: '8h' });
     
           res.status(200)
-             .json({message: 'Successfully Login', flag: 'true', token: token, tokenTimer: 3600, staffAccessCode: rows[0].staff_access_code, UserName: rows[0].login_Id});
+             .json({message: 'SUCCESS', token: token, tokenTimer: 3600, staffAccessCode: rows[0].staff_access_code, UserName: rows[0].login_Id});
         }else {
           res.status(200)
-             .json({message: 'Failed to Login', flag: 'false'});
+             .json({message: 'USERNAME_ERROR'});
         }
     
     
       }
   
       
-    });
+    }); // close loginCheck Query
+    
 
   
 
